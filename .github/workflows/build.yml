@@ -1,0 +1,30 @@
+name: Build Save Editor
+
+on:
+  workflow_dispatch: # Allows you to manually trigger the build via a button
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
+    - name: Restore NuGet Packages
+      run: nuget restore Sonic1-2_SaveEditor.sln
+
+    - name: Build Solution to Release
+      run: msbuild Sonic1-2_SaveEditor.sln /p:configuration="Release" /p:platform="Any CPU"
+
+    - name: Upload Compiled EXE Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Sonic-Save-Editor-EXE
+        path: Sonic1-2_SaveEditor/bin/Release/
