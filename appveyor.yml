@@ -1,13 +1,36 @@
-image: Visual Studio 2022
-configuration: Release
+name: Build Save Editor
 
-before_build:
-  - nuget restore Sonic1-2_SaveEditor.sln
+on:
+  workflow_dispatch:
 
-build:
-  project: Sonic1-2_SaveEditor.sln
-  verbosity: minimal
+jobs:
+  build:
+    runs-on: windows-2019
 
-artifacts:
-  - path: 'Sonic1-2_SaveEditor\bin\Release\*.exe'
-    name: SaveEditorEXE
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Install .NET Framework 4.6.1 Developer Pack
+      run: |
+        choco install netfx-4.6.1-devpack -y
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
+    - name: Restore NuGet Packages
+      run: nuget restore Sonic1-2_SaveEditor.sln
+
+    - name: Build Solution
+      run: msbuild Sonic1-2_SaveEditor.sln /p:Configuration=Release /p:Platform="Any CPU"
+
+    - name: Upload Compiled EXE
+      uses: actions/upload-artifact@v4
+      with:
+        name: Sonic-Save-Editor-EXE
+        path: |
+          Sonic1-2_SaveEditor/bin/Release/
+          RSDKvB/bin/Release/
