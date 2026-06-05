@@ -1,0 +1,13 @@
+image: Visual Studio 2022
+configuration: Release
+
+before_build:
+  - nuget restore Sonic1-2_SaveEditor.sln
+
+build:
+  project: Sonic1-2_SaveEditor.sln
+  verbosity: minimal
+
+artifacts:
+  - path: 'Sonic1-2_SaveEditor\bin\Release\*.exe'
+    name: SaveEditorEXE
